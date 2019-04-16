@@ -2,17 +2,17 @@
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
     <sitemap>
-        <loc>http://yoursite-url/post-sitemap.xml</loc>
+        <loc>https://wmj765.github.io/post-sitemap.xml</loc>
         <lastmod>2019-04-16T06:23:29.739Z</lastmod>
     </sitemap>
 
     <sitemap>
-        <loc>http://yoursite-url/page-sitemap.xml</loc>
+        <loc>https://wmj765.github.io/page-sitemap.xml</loc>
         <lastmod>2019-04-16T06:23:29.862Z</lastmod>
     </sitemap>
 
     <sitemap>
-        <loc>http://yoursite-url/tag-sitemap.xml</loc>
+        <loc>https://wmj765.github.io/tag-sitemap.xml</loc>
         <lastmod>2019-04-16T06:23:29.739Z</lastmod>
     </sitemap>
 
