@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="sitemap.xsl"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
     <url>
         <loc>https://wmj765.github.io</loc>
         <changefreq>daily</changefreq>
@@ -8,7 +9,7 @@
 
     <url>
         <loc>https://wmj765.github.io/2019/04/18/pring-Cloud-Eureka-Ribbon%E5%AE%9E%E7%8E%B0%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1-1/</loc>
-        <lastmod>2019-04-18T02:41:32.239Z</lastmod>
+        <lastmod>2019-04-18T09:43:15.800Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
