@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          mysql 拆分以逗号隔开的字段并应用在in查询 - 无名居的博客
+          无名居的博客
         
     </title>
 
-    <link rel="canonical" href="https://wmj765.github.io/2019/04/18/ysql-拆分以逗号隔开的字段并应用在in查询/">
+    <link rel="canonical" href="https://wmj765.github.io/archives/2019/06/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -69,8 +69,8 @@
 <style type="text/css">
     header.intro-header{
         
-            background-image: url('Demo.png')
-            /*post*/
+            background-image: url('/undefined')
+            /*page*/
         
     }
     
@@ -87,16 +87,10 @@
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 
-                    <div class="post-heading">
-                        <div class="tags">
-                            
-                        </div>
-                        <h1>mysql 拆分以逗号隔开的字段并应用在in查询</h1>
-                        <h2 class="subheading"></h2>
-                        <span class="meta">
-                            Posted by wangmj on
-                            2019-04-18
-                        </span>
+                    <div class="site-heading">
+                        <h1>无名居的博客</h1>
+                        <!--<hr class="small">-->
+                        <span class="subheading">书山有路勤为径</span>
                     </div>
                 
 
@@ -199,195 +193,227 @@
 
 
     <!-- Main Content -->
-    <!-- Modify by Yu-Hsuan Yen -->
+    <!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
 
-<!-- Post Content -->
-<article>
-    <div class="container">
-        <div class="row">
-
-            <!-- Post Container -->
+<!-- USE SIDEBAR -->
+    <!-- Post Container -->
             <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                post-container">
-
-                <h1><span id="mysql-拆分以逗号隔开的字段并应用在in查询">mysql 拆分以逗号隔开的字段并应用在in查询</span></h1>
-<p>利用substring_index及笛卡尔积来循环拆分sql字段；</p>
-<p>首先建立几条数据</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">id</th>
-<th style="text-align:center">value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Computer</td>
-<td style="text-align:center">5,ddd,eee</td>
-</tr>
-<tr>
-<td style="text-align:left">Phone</td>
-<td style="text-align:center">12,3333,11</td>
-</tr>
-<tr>
-<td style="text-align:left">Pipe</td>
-<td style="text-align:center">234</td>
-</tr>
-</tbody>
-</table>
-<p>假如我们需要查询的字段in phone字段的值(12,3333,11)，我们可以用一下方法</p>
-<p>###具体方法</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">准备示例数据</span><br><span class="line">create table tbl_name (ID int ,mSize varchar(<span class="number">100</span>));</span><br><span class="line">insert into tbl_name values (<span class="number">1</span>,<span class="string">'tiny,small,big'</span>);</span><br><span class="line">insert into tbl_name values (<span class="number">2</span>,<span class="string">'small,medium'</span>);</span><br><span class="line">insert into tbl_name values (<span class="number">3</span>,<span class="string">'tiny,big'</span>);</span><br><span class="line"></span><br><span class="line">实现行列转换的SQL</span><br><span class="line">select * <span class="keyword">from</span> table where phone <span class="keyword">in</span> (</span><br><span class="line">	select  </span><br><span class="line">		substring_index(substring_index(a.mSize,<span class="string">','</span></span><br><span class="line">		,b.help_topic_id+<span class="number">1</span>),<span class="string">','</span>,<span class="number">-1</span>) </span><br><span class="line">	<span class="keyword">from</span> </span><br><span class="line">		tbl_name a</span><br><span class="line">	join</span><br><span class="line">		mysql.help_topic b</span><br><span class="line">		on b.help_topic_id &lt; (length(a.mSize) -     length(replace(a.mSize,<span class="string">','</span>,<span class="string">''</span>))+<span class="number">1</span>)</span><br><span class="line">	order by a.ID;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p><strong>原理分析</strong>　<br>
-这个join最基本原理是笛卡尔积。通过这个方式来实现循环。 以下是具体问题分析： length(a.Size) - length(replace(a.mSize,’,’,’’))+1 表示了，按照逗号分割后，改列拥有的数值数量，下面简称n join过程的伪代码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">根据ID进行循环</span><br><span class="line">&#123;</span><br><span class="line">    判断：i 是否 &lt;= n</span><br><span class="line">    &#123;</span><br><span class="line">        获取最靠近第 i 个逗号之前的数据， 即 substring_index(substring_index(a.mSize,<span class="string">','</span>,b.ID),<span class="string">','</span>,<span class="number">-1</span>)</span><br><span class="line">        i = i +<span class="number">1</span> </span><br><span class="line">    &#125;</span><br><span class="line">    ID = ID +<span class="number">1</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>以上及实现了字段按逗号分隔来用作in的子查询</p>
-
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                post-container
+            ">
+            
                 
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <!-- 归档列表 -->
+            
+            
 
-                <hr>
-                <!-- Pager -->
-                <ul class="pager">
-                    
-                        <li class="previous">
-                            <a href="/2019/04/18/ava基础之集合框架-Collection及Map顶级接口/" data-toggle="tooltip" data-placement="top" title="java基础之集合框架--Collection及Map顶级接口">&larr; Previous Post</a>
-                        </li>
-                    
-                    
-                        <li class="next">
-                            <a href="/2019/03/18/hexo-theme-beantech/" data-toggle="tooltip" data-placement="top" title="[Hexo] Theme BeanTech">Next Post &rarr;</a>
-                        </li>
-                    
+             <!-- 归档列表 -->
+
+            
+            <div class="one-tag-list">
+                <span class="fa fa-calendar-times-o listing-seperator" id="2019">
+                    <span class="tag-text">2019</span>
+                </span>
+                <ul>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li>
+                    06-28
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2019/06/28/你好，hexo/" style="color: #0085a1">
+                        <span>
+                            你好，hexo
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li>
+                    04-18
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2019/04/18/ava基础之集合框架-Collection及Map顶级接口/" style="color: #0085a1">
+                        <span>
+                            java基础之集合框架--Collection及Map顶级接口
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li>
+                    04-18
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2019/04/18/ysql-拆分以逗号隔开的字段并应用在in查询/" style="color: #0085a1">
+                        <span>
+                            mysql 拆分以逗号隔开的字段并应用在in查询
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li>
+                    03-18
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2019/03/18/hexo-theme-beantech/" style="color: #0085a1">
+                        <span>
+                            [Hexo] Theme BeanTech
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
                 </ul>
-
-                <!-- duoshuo Share start -->
-                
-                <!-- 多说 Share end-->
-
-                <!-- 多说评论框 start -->
-                
-                <!-- 多说评论框 end -->
-
-                <!-- disqus comment start -->
-                
-                    <div class="comment">
-                        <div id="disqus_thread" class="disqus-thread"></div>
-                    </div>
-                
-                <!-- disqus comment end -->
             </div>
             
-            <!-- Tabe of Content -->
-            <!-- Table of Contents -->
 
-    
-      <aside id="sidebar">
-        <div id="toc" class="toc-article">
-        <strong class="toc-title">Contents</strong>
-        
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">mysql 拆分以逗号隔开的字段并应用在in查询</span></a></li></ol>
-        
-        </div>
-      </aside>
-    
 
-                
-            <!-- Sidebar Container -->
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                sidebar-container">
-
-                <!-- Featured Tags -->
-                
-                <section>
-                    <!-- no hr -->
-                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
-                    <div class="tags">
-                       
-                    </div>
-                </section>
-                
-
-                <!-- Friends Blog -->
-                
-                <hr>
-                <h5>FRIENDS</h5>
-                <ul class="list-inline">
-
-                    
-                        <li><a href="http://beantech.org" target="_blank">Bean Tech</a></li>
-                    
-                        <li><a href="http://blog.kaijun.rocks" target="_blank">Kaijun&#39;s Blog</a></li>
-                    
-                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
-                    
-                        <li><a href="#" target="_blank">It Helps SEO</a></li>
-                    
-                </ul>
-                
-            </div>
         </div>
     </div>
-</article>
+</div>
 
+                <!-- 如果开启评论功能 -->
+                
+            </div>
 
+          <!-- Sidebar Container -->
+<div class="
+    col-lg-3 col-lg-offset-0
+    col-md-3 col-md-offset-0
+    col-sm-12
+    col-xs-12
+    sidebar-container
+">
+    
+        <!-- Featured Tags -->
 
+<section>
+    <!-- no hr -->
+    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+            
+        
+            
+        
+    </div>
+</section>
 
-<!-- disqus embedded js code start (one page only need to embed once) -->
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = "wmj765";
-    var disqus_identifier = "https://wmj765.github.io/2019/04/18/ysql-拆分以逗号隔开的字段并应用在in查询/";
-    var disqus_url = "https://wmj765.github.io/2019/04/18/ysql-拆分以逗号隔开的字段并应用在in查询/";
+        <hr>
+    
+        <!-- Short About -->
+<section class="visible-md visible-lg">
+    <h5><a href="/about/">ABOUT ME</a></h5>
+    <div class="short-about">
 
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<!-- disqus embedded js code start end -->
+        
+            <img id="avatar_pic" src="/img/ironman-draw.png">
+        
 
+        
+            <p>大家好，我是无名居</p>
+        
 
+        <!-- SNS Link -->
+        <ul class="list-inline">
+            
+            
+            
 
+            
 
-<!-- async load function -->
-<script>
-    function async(u, c) {
-      var d = document, t = 'script',
-          o = d.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-      o.src = u;
-      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
-      s.parentNode.insertBefore(o, s);
-    }
-</script>
-<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
-<script>
-    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
-        anchors.options = {
-          visible: 'hover',
-          placement: 'left',
-          icon: 'ℬ'
-        };
-        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
-    })
-</script>
-<style>
-    /* place left on bigger screen */
-    @media all and (min-width: 800px) {
-        .anchorjs-link{
-            position: absolute;
-            left: -0.75em;
-            font-size: 1.1em;
-            margin-top : -0.1em;
-        }
-    }
-</style>
+            
 
+            
+                <li>
+                    <a target="_blank" href="https://github.com/wmj765">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+            
+            
+            
+        </ul>
+    </div>
+</section>
+        <hr>
+    
+        
+  <h5>RECENT POSTS
+  <div class="widget">
+    <ul>
+      
+        <li>
+          <a href="/2019/06/28/你好，hexo/">你好，hexo</a>
+        </li>
+      
+        <li>
+          <a href="/2019/04/18/ava基础之集合框架-Collection及Map顶级接口/">java基础之集合框架--Collection及Map顶级接口</a>
+        </li>
+      
+        <li>
+          <a href="/2019/04/18/ysql-拆分以逗号隔开的字段并应用在in查询/">mysql 拆分以逗号隔开的字段并应用在in查询</a>
+        </li>
+      
+        <li>
+          <a href="/2019/03/18/hexo-theme-beantech/">[Hexo] Theme BeanTech</a>
+        </li>
+      
+    </ul>
+  </div>
+</h5>
+        <hr>
+    
+        <!-- Friends Blog -->
+
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+
+    
+        <li><a href="http://beantech.org" target="_blank">Bean Tech</a></li>
+    
+        <li><a href="http://blog.kaijun.rocks" target="_blank">Kaijun&#39;s Blog</a></li>
+    
+        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+    
+        <li><a href="#" target="_blank">It Helps SEO</a></li>
+    
+</ul>
+
+        <hr>
+    
+</div>
+
+        
+    </div>
+</div>
 
 
     <!-- Footer -->

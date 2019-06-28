@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          mysql 拆分以逗号隔开的字段并应用在in查询 - 无名居的博客
+          你好，hexo - 无名居的博客
         
     </title>
 
-    <link rel="canonical" href="https://wmj765.github.io/2019/04/18/ysql-拆分以逗号隔开的字段并应用在in查询/">
+    <link rel="canonical" href="https://wmj765.github.io/2019/06/28/你好，hexo/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -69,7 +69,7 @@
 <style type="text/css">
     header.intro-header{
         
-            background-image: url('Demo.png')
+            background-image: url('null')
             /*post*/
         
     }
@@ -91,11 +91,11 @@
                         <div class="tags">
                             
                         </div>
-                        <h1>mysql 拆分以逗号隔开的字段并应用在in查询</h1>
+                        <h1>你好，hexo</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by wangmj on
-                            2019-04-18
+                            2019-06-28
                         </span>
                     </div>
                 
@@ -212,52 +212,16 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1><span id="mysql-拆分以逗号隔开的字段并应用在in查询">mysql 拆分以逗号隔开的字段并应用在in查询</span></h1>
-<p>利用substring_index及笛卡尔积来循环拆分sql字段；</p>
-<p>首先建立几条数据</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">id</th>
-<th style="text-align:center">value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Computer</td>
-<td style="text-align:center">5,ddd,eee</td>
-</tr>
-<tr>
-<td style="text-align:left">Phone</td>
-<td style="text-align:center">12,3333,11</td>
-</tr>
-<tr>
-<td style="text-align:left">Pipe</td>
-<td style="text-align:center">234</td>
-</tr>
-</tbody>
-</table>
-<p>假如我们需要查询的字段in phone字段的值(12,3333,11)，我们可以用一下方法</p>
-<p>###具体方法</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">准备示例数据</span><br><span class="line">create table tbl_name (ID int ,mSize varchar(<span class="number">100</span>));</span><br><span class="line">insert into tbl_name values (<span class="number">1</span>,<span class="string">'tiny,small,big'</span>);</span><br><span class="line">insert into tbl_name values (<span class="number">2</span>,<span class="string">'small,medium'</span>);</span><br><span class="line">insert into tbl_name values (<span class="number">3</span>,<span class="string">'tiny,big'</span>);</span><br><span class="line"></span><br><span class="line">实现行列转换的SQL</span><br><span class="line">select * <span class="keyword">from</span> table where phone <span class="keyword">in</span> (</span><br><span class="line">	select  </span><br><span class="line">		substring_index(substring_index(a.mSize,<span class="string">','</span></span><br><span class="line">		,b.help_topic_id+<span class="number">1</span>),<span class="string">','</span>,<span class="number">-1</span>) </span><br><span class="line">	<span class="keyword">from</span> </span><br><span class="line">		tbl_name a</span><br><span class="line">	join</span><br><span class="line">		mysql.help_topic b</span><br><span class="line">		on b.help_topic_id &lt; (length(a.mSize) -     length(replace(a.mSize,<span class="string">','</span>,<span class="string">''</span>))+<span class="number">1</span>)</span><br><span class="line">	order by a.ID;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p><strong>原理分析</strong>　<br>
-这个join最基本原理是笛卡尔积。通过这个方式来实现循环。 以下是具体问题分析： length(a.Size) - length(replace(a.mSize,’,’,’’))+1 表示了，按照逗号分割后，改列拥有的数值数量，下面简称n join过程的伪代码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">根据ID进行循环</span><br><span class="line">&#123;</span><br><span class="line">    判断：i 是否 &lt;= n</span><br><span class="line">    &#123;</span><br><span class="line">        获取最靠近第 i 个逗号之前的数据， 即 substring_index(substring_index(a.mSize,<span class="string">','</span>,b.ID),<span class="string">','</span>,<span class="number">-1</span>)</span><br><span class="line">        i = i +<span class="number">1</span> </span><br><span class="line">    &#125;</span><br><span class="line">    ID = ID +<span class="number">1</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>以上及实现了字段按逗号分隔来用作in的子查询</p>
-
+                
                 
 
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/2019/04/18/ava基础之集合框架-Collection及Map顶级接口/" data-toggle="tooltip" data-placement="top" title="java基础之集合框架--Collection及Map顶级接口">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/2019/03/18/hexo-theme-beantech/" data-toggle="tooltip" data-placement="top" title="[Hexo] Theme BeanTech">Next Post &rarr;</a>
+                            <a href="/2019/04/18/ava基础之集合框架-Collection及Map顶级接口/" data-toggle="tooltip" data-placement="top" title="java基础之集合框架--Collection及Map顶级接口">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -287,7 +251,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">mysql 拆分以逗号隔开的字段并应用在in查询</span></a></li></ol>
+          <ol class="nav">none</ol>
         
         </div>
       </aside>
@@ -340,8 +304,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "wmj765";
-    var disqus_identifier = "https://wmj765.github.io/2019/04/18/ysql-拆分以逗号隔开的字段并应用在in查询/";
-    var disqus_url = "https://wmj765.github.io/2019/04/18/ysql-拆分以逗号隔开的字段并应用在in查询/";
+    var disqus_identifier = "https://wmj765.github.io/2019/06/28/你好，hexo/";
+    var disqus_url = "https://wmj765.github.io/2019/06/28/你好，hexo/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
