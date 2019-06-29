@@ -143,14 +143,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -210,6 +210,44 @@
             
                 <!-- Main Content -->
 
+
+<div class="post-preview">
+
+    <a href="/2018/08/11/VM系列-JVM运行时内存区域/">
+        <h2 class="post-title">
+            JVM系列-JVM运行时内存区域
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            JVM运行时内存区域构成
+
+程序计数器
+虚拟机栈
+本地方法栈
+堆内存
+方法区
+
+
+程序计数器
+程序计数器所占内存非常小，为线程私有变量，可以看住当前线程执行行数的记录，字节码解释器通过程序计数器来查找下一条指令，及线程恢复切换等操作。
+Java虚拟机栈
+Java虚拟机栈主要存放基本类型变量及对象变量的内存地址信息，为线程私有变量。每个方法在执行的时候都会创建一个栈帧(Stack Frame)......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by wangmj on
+            2018-08-11
+        </p>
+        <div class="tags">
+            
+        </div>
+    
+
+</div>
+<hr>
 
 <div class="post-preview">
 
@@ -494,33 +532,6 @@ HashSet源码分析
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2017/11/29/VA-对象序列化——Serializable/">
-        <h2 class="post-title">
-            JAVA 对象序列化——Serializable
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            ##JAVA 对象序列化——Serializable
-上一篇分析HashMap时，每次put新值得时候将key、value放在一个transient Node[] table数组里面，大家注意到前面的关键字transient了吗？他代表什么意义呢；我们知道Map接口实现了顶级接口Serializable，表示Map对象的所有属性都是可序列化的，但是加上transient关键字就表示此属性不在......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by wangmj on
-            2017-11-29
-        </p>
-        <div class="tags">
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -616,6 +627,10 @@ HashSet源码分析
     <ul>
       
         <li>
+          <a href="/2019/06/29/testImg/">testImg</a>
+        </li>
+      
+        <li>
           <a href="/2019/06/29/est/">test</a>
         </li>
       
@@ -629,10 +644,6 @@ HashSet源码分析
       
         <li>
           <a href="/2019/03/16/算法与结构-插入排序/">算法与结构--插入排序</a>
-        </li>
-      
-        <li>
-          <a href="/2018/11/30/jvm类加载机制/">jvm类加载机制</a>
         </li>
       
     </ul>
