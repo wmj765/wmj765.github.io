@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          java基础之集合框架--HashMap深入理解及应用 - 无名居的博客
+        
+    </title>
+
+    <link rel="canonical" href="https://wmj765.github.io/2017/11/02/titledjava基础之集合框架-HashMap深入理解及应用/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('null')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                        </div>
+                        <h1>java基础之集合框架--HashMap深入理解及应用</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by wangmj on
+                            2017-11-02
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">无名居的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1><span id="java基础之集合框架hashmap深入理解及应用">java基础之集合框架–HashMap深入理解及应用</span></h1>
+<p>接着上一篇写，在分析之前，先想想几个问题，方便后面理解<br>
+1.HashMap的底层结构是什么，画出来；<br>
+2.再用HashMap的时候会考虑他的容量吗？它的默认容量是多少，加如超过了你初始化的容量会发生什么?<br>
+3.HashMap key是否可以为null；<br>
+4.自己实现一个简单的HashMap（HashMap的实现原理）</p>
+<h3><span id="hashmap底层结构">HashMap底层结构</span></h3>
+<p><img src="http://img.blog.csdn.net/20171109152256888?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd21qNzY1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>
+上图即为hashMap的底层存储结构图，可以看出，其实就是一个类似数组+链表来存储的，数组默认长度为16；那么数组中如何来存储key,value对象呢？来看下hashMap的源码，我直接拿jdk 1.8的源码来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">   * The table, initialized on first use, and resized as</span><br><span class="line">   * necessary. When allocated, length is always a power of two.</span><br><span class="line">   * (We also tolerate length zero in some operations to allow</span><br><span class="line">   * bootstrapping mechanics that are currently not needed.)</span><br><span class="line">   */</span><br><span class="line">   //存放key value值得数组</span><br><span class="line">  transient Node&lt;K,V&gt;[] table;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line">   * Basic hash bin node, used for most entries.  (See below for</span><br><span class="line">   * TreeNode subclass, and in LinkedHashMap for its Entry subclass.)</span><br><span class="line">   */</span><br><span class="line">  static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; &#123;</span><br><span class="line">      final int hash;</span><br><span class="line">      final K key;</span><br><span class="line">      V value;</span><br><span class="line">      Node&lt;K,V&gt; next;</span><br><span class="line"></span><br><span class="line">//存放key Value及下个元素的标识next</span><br><span class="line">      Node(int hash, K key, V value, Node&lt;K,V&gt; next) &#123;</span><br><span class="line">          this.hash = hash;</span><br><span class="line">          this.key = key;</span><br><span class="line">          this.value = value;</span><br><span class="line">          this.next = next;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      public final K getKey()        &#123; return key; &#125;</span><br><span class="line">      public final V getValue()      &#123; return value; &#125;</span><br><span class="line">      public final String toString() &#123; return key + &quot;=&quot; + value; &#125;</span><br><span class="line"></span><br><span class="line">      public final int hashCode() &#123;</span><br><span class="line">          return Objects.hashCode(key) ^ Objects.hashCode(value);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      public final V setValue(V newValue) &#123;</span><br><span class="line">          V oldValue = value;</span><br><span class="line">          value = newValue;</span><br><span class="line">          return oldValue;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      public final boolean equals(Object o) &#123;</span><br><span class="line">          if (o == this)</span><br><span class="line">              return true;</span><br><span class="line">          if (o instanceof Map.Entry) &#123;</span><br><span class="line">              Map.Entry&lt;?,?&gt; e = (Map.Entry&lt;?,?&gt;)o;</span><br><span class="line">              if (Objects.equals(key, e.getKey()) &amp;&amp;</span><br><span class="line">                  Objects.equals(value, e.getValue()))</span><br><span class="line">                  return true;</span><br><span class="line">          &#125;</span><br><span class="line">          return false;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>其实存放key,value就放在这个Node里面，Node会在第一次初始化赋值，它为一个静态的内部类，实现了Map.Entry内部接口；<br>
+当map.put元素的时候，hashMap会根据hashcode值来计算出一个index，来存放此对象；若下一个对象算出的index值与第一个index值相同，则将原始的next标记为下一个对象，这样就形成了单项有序的链表；<br>
+再来看一下HashMap的put怎么实现的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Implements Map.put and related methods</span><br><span class="line"> *</span><br><span class="line"> * @param hash key的hash值</span><br><span class="line"> * @param key </span><br><span class="line"> * @param value the value to put</span><br><span class="line"> * @param onlyIfAbsent 判断是否为重复的key，若true，则改变value值，默认为false</span><br><span class="line"> * @param evict 是否为初始化map，默认true</span><br><span class="line"> * @return previous value, or null if none</span><br><span class="line"> */</span><br><span class="line">final V putVal(int hash, K key, V value, boolean onlyIfAbsent,</span><br><span class="line">               boolean evict) &#123;</span><br><span class="line">    Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;</span><br><span class="line">    //赋值tab，判断table是否为空</span><br><span class="line">    if ((tab = table) == null || (n = tab.length) == 0)</span><br><span class="line">    //若为空，则赋值n为0</span><br><span class="line">        n = (tab = resize()).length;</span><br><span class="line">        //(n - 1) &amp; hash计算index，若tab空，则新赋值,并将next设为null；</span><br><span class="line">    if ((p = tab[i = (n - 1) &amp; hash]) == null)</span><br><span class="line">    //为此index赋值</span><br><span class="line">        tab[i] = newNode(hash, key, value, null);</span><br><span class="line">    else &#123;</span><br><span class="line">        Node&lt;K,V&gt; e; K k;</span><br><span class="line">        if (p.hash == hash &amp;&amp;</span><br><span class="line">            ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))</span><br><span class="line">            e = p;</span><br><span class="line">        else if (p instanceof TreeNode)</span><br><span class="line">            e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);</span><br><span class="line">        else &#123;//若Index处有值，则将此处值得next赋给新值</span><br><span class="line">            for (int binCount = 0; ; ++binCount) &#123;</span><br><span class="line">                if ((e = p.next) == null) &#123;</span><br><span class="line">                    p.next = newNode(hash, key, value, null);</span><br><span class="line">                    if (binCount &gt;= TREEIFY_THRESHOLD - 1) // -1 for 1st</span><br><span class="line">                        treeifyBin(tab, hash);</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                if (e.hash == hash &amp;&amp;</span><br><span class="line">                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))</span><br><span class="line">                    break;</span><br><span class="line">                p = e;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        //若key已经存在，则将此key处的值替换</span><br><span class="line">        if (e != null) &#123; // existing mapping for key</span><br><span class="line">            V oldValue = e.value;</span><br><span class="line">            if (!onlyIfAbsent || oldValue == null)</span><br><span class="line">                e.value = value;</span><br><span class="line">            afterNodeAccess(e);</span><br><span class="line">            return oldValue;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ++modCount;</span><br><span class="line">    if (++size &gt; threshold)//计算大于威胁容量</span><br><span class="line">        resize();</span><br><span class="line">    afterNodeInsertion(evict);</span><br><span class="line">    return null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码我加了写注释，简单点说，就是put新值的时候，先存储起来，放在一个Node里面，index是0，在次put的时候，先计算index值，<strong>(n - 1) &amp; hash</strong>；若index相同，则将值放在next里，若不相同，则将值放在新的index里；<br>
+get值得时候同理，先计算index值，然后再根据index值来看有没有这个key，没有在看next里有没有；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if (++size &gt; threshold)//计算大于威胁容量</span><br><span class="line">            resize();</span><br></pre></td></tr></table></figure>
+<p>下面说下这段代码的意义，即我们讨论的map容量与扩容问题。threshold参数的意义为威胁容量，当我们的size大于威胁容量的时候，map就会扩容处理；当默认容量为16时，威胁容量为12，若map得size大于12时，则会进入risize方法，并对容量及威胁容量都进行双倍扩容处理；关键代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">if (oldCap &gt; 0) &#123;</span><br><span class="line">            if (oldCap &gt;= MAXIMUM_CAPACITY) &#123;</span><br><span class="line">                threshold = Integer.MAX_VALUE;</span><br><span class="line">                return oldTab;</span><br><span class="line">            &#125;</span><br><span class="line">            //newCap双倍扩容</span><br><span class="line">            else if ((newCap = oldCap &lt;&lt; 1) &lt; MAXIMUM_CAPACITY &amp;&amp;</span><br><span class="line">                     oldCap &gt;= DEFAULT_INITIAL_CAPACITY)</span><br><span class="line">                newThr = oldThr &lt;&lt; 1; // 双倍扩容</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>HashMap暂时就分析到这，上面几个问题的答案也就都出来了，还有好多细节方面的知识，包括怎么计算算出index值中的参数；值得我们深入研究下并借鉴。</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2017/11/29/VA-对象序列化——Serializable/" data-toggle="tooltip" data-placement="top" title="JAVA 对象序列化——Serializable">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/04/18/ava基础之集合框架-Collection及Map顶级接口/" data-toggle="tooltip" data-placement="top" title="java基础之集合框架--Collection及Map顶级接口">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">java基础之集合框架–HashMap深入理解及应用</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.0.1.</span> <span class="toc-nav-text">HashMap底层结构</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://beantech.org" target="_blank">Bean Tech</a></li>
+                    
+                        <li><a href="http://blog.kaijun.rocks" target="_blank">Kaijun&#39;s Blog</a></li>
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">It Helps SEO</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "wmj765";
+    var disqus_identifier = "https://wmj765.github.io/2017/11/02/titledjava基础之集合框架-HashMap深入理解及应用/";
+    var disqus_url = "https://wmj765.github.io/2017/11/02/titledjava基础之集合框架-HashMap深入理解及应用/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/wmj765">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; wangmj 2019 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://wmj765.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="https://wmj765.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

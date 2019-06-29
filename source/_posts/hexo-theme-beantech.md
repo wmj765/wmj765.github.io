@@ -8,7 +8,7 @@ tags:
 catagories:
   - Hexo
 categories: []
-date: 2019-03-18 10:51:00
+date: 2016-03-18 10:51:00
 ---
 > Ported Theme of [Hux Blog](https://github.com/Huxpro/huxpro.github.io), Thank [Huxpro](https://github.com/Huxpro) for designing such a flawless theme.
 > 

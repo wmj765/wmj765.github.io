@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          java concurrent包下的锁 - 无名居的博客
+        
+    </title>
+
+    <link rel="canonical" href="https://wmj765.github.io/2018/07/29/va-concurrent包下的锁/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('null')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                        </div>
+                        <h1>java concurrent包下的锁</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by wangmj on
+                            2018-07-29
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">无名居的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h3><span id="concurrent包下锁的种类">concurrent包下锁的种类</span></h3>
+<ul>
+<li>接口：Lock、ReadWriteLock、Condition</li>
+<li>实现类：ReentrantLock、ReentrantReadWriteLock、StampedLock</li>
+<li>抽象类：AbstractQueuedSychronizer</li>
+</ul>
+<p>简单梳理下锁的关系ReentrantLock实现了Lock接口，并内部实现了AQS同步器；ReentrantReadWriteLock实现了ReadWriteLock接口，并有内部类实现类AQS同步器，可以看出无论上面两种锁实现的关键都是AQS同步器，足以看出想要深入理解锁，必须先掌握AQS同步器，可以查看我的上一篇介绍AQS的博客【<a href="https://blog.csdn.net/wmj765/article/details/86539873" target="_blank" rel="noopener">同步队列-AbstractQueuedSyncronizer</a>】下面将逐一介绍并写demo来理解锁的使用方法。</p>
+<h4><span id="reentrantlock可重入锁分析及使用">ReentrantLock可重入锁分析及使用</span></h4>
+<ul>
+<li>volatile int state 状态值，很重要的一个参数，来标识同步状态，可以先将其理解为当前已经获取锁的次数(不准确，为入门者方便理解，后面会具体分析)。</li>
+<li>sync extends AQS 内部类，继承同步器，需要自己重写tryAcquire()、tryRelease()或者tryAcquireShared()、tryReleaseShared方法；一个是独占锁的实现，一个是可共享的实现</li>
+</ul>
+<h5><span id="共享锁与独占锁">共享锁与独占锁</span></h5>
+<p>独占锁的实现上篇博客写了个例子，这里在简单总结下，独占就相当于同时只有一个线程可以获取到锁，其他线程则阻塞在队列中，此时只需在获取锁的时候判断state值是否为0，若为0，则cas自旋将1赋值给state，若为1，则将当前线程放入到队列中，内部结构为双向链表。<br>
+共享锁即同时可以有多个线程获取到锁（CountDownLatch），思路其实和独占锁大体相同，只不过state值将不是以1位分界，下面我自己实现了一个简单的共享锁</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">import java.util.concurrent.locks.AbstractQueuedSynchronizer;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 自定义共享锁，继承AQS，重写tryAcquireShared/tryReleaseShared</span><br><span class="line"> *</span><br><span class="line"> * @author wangmj</span><br><span class="line"> * @since 2019/1/18</span><br><span class="line"> */</span><br><span class="line">public class CountDownLock &#123;</span><br><span class="line">    private final class sync extends AbstractQueuedSynchronizer &#123;</span><br><span class="line">        //自旋CAS将state设置成剩余可进入线程数</span><br><span class="line">        @Override</span><br><span class="line">        protected int tryAcquireShared(int reduce) &#123;</span><br><span class="line">            for (; ; ) &#123;</span><br><span class="line">                //当前状态值</span><br><span class="line">                int current = getState();</span><br><span class="line">                //剩余可进入的线程</span><br><span class="line">                int rest = current - reduce;</span><br><span class="line">                //当rest&lt;0将线程任务放入队列等待</span><br><span class="line">                if (rest &lt; 0 || compareAndSetState(current, rest)) &#123;</span><br><span class="line">                    return rest;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        protected boolean tryReleaseShared(int increment) &#123;</span><br><span class="line">            for (; ; ) &#123;</span><br><span class="line">                int current = getState();</span><br><span class="line">                int newCount = current + increment;</span><br><span class="line">                if (newCount &gt; 2)</span><br><span class="line">                    throw new IllegalArgumentException();</span><br><span class="line">                if (compareAndSetState(current, newCount)) &#123;</span><br><span class="line">                    return true;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        sync(int count) &#123;</span><br><span class="line">            if (count &lt; 0)</span><br><span class="line">                throw new IllegalMonitorStateException();</span><br><span class="line">            setState(count);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private final sync sync = new sync(2);</span><br><span class="line"></span><br><span class="line">    public void lock() &#123;</span><br><span class="line">        sync.acquireShared(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void unLock() &#123;</span><br><span class="line">        sync.releaseShared(1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码固定实现了可以2个线程共享的功能，继续写一段测试代码来验证是否成功</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 共享锁测试类 结果应为两个线程同时获取到锁，然后等待1S，即线程成对出现</span><br><span class="line"> *</span><br><span class="line"> * @author wangmj</span><br><span class="line"> * @since 2019/1/18</span><br><span class="line"> */</span><br><span class="line">public class CountDownLockTest &#123;</span><br><span class="line"></span><br><span class="line">    static class task implements Runnable &#123;</span><br><span class="line">        CountDownLock lock = new CountDownLock();</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            lock.lock();</span><br><span class="line">            try &#123;</span><br><span class="line">                Thread.sleep(1000);</span><br><span class="line">                System.out.println(&quot;currentThread&quot; + Thread.currentThread().getName());</span><br><span class="line">            &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                lock.unLock();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">        task task = new task();</span><br><span class="line">        for (int i = 0; i &lt; 10; i++) &#123;</span><br><span class="line">            Thread thread = new Thread(task);</span><br><span class="line">            thread.start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果是线程成对出现，并间隔一秒，即同时可以有两个线程来获取到锁</p>
+<h5><span id="公平锁与非公平锁">公平锁与非公平锁</span></h5>
+<p>公平锁与非公平锁的主要区别是公平锁会完全按照先入先出的顺序来执行等待队列中的线程，而非公平锁则在获取锁的时候会先尝试当前线程获取到锁，若当前线程获取锁失败，则加入等待队列后和公平锁没有区别，下面我写了个简单的例子来看公平锁和非公平锁</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.Collection;</span><br><span class="line">import java.util.Collections;</span><br><span class="line">import java.util.List;</span><br><span class="line">import java.util.concurrent.locks.ReentrantLock;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 继承ReentrantLock，重写getQueuedThreads,将当前队列反转成正序</span><br><span class="line"> *</span><br><span class="line"> * @author wangmj</span><br><span class="line"> * @since 2019/1/19</span><br><span class="line"> */</span><br><span class="line">public class RentrantLockDemo extends ReentrantLock &#123;</span><br><span class="line"></span><br><span class="line">    public RentrantLockDemo(boolean fair) &#123;</span><br><span class="line">        super(fair);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Collection&lt;Thread&gt; getQueuedThreads() &#123;</span><br><span class="line">        List list = new ArrayList(super.getQueuedThreads());</span><br><span class="line">        Collections.reverse(list);</span><br><span class="line">        return list;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>继续写一个测试类，来测试公平锁与非公平锁</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 测试公平锁与非公平锁的区别</span><br><span class="line"> *</span><br><span class="line"> * @author wangmj</span><br><span class="line"> * @since 2019/1/19</span><br><span class="line"> */</span><br><span class="line">public class ReentrantLockTest &#123;</span><br><span class="line">    private static RentrantLockDemo fairLock = new RentrantLockDemo(true);</span><br><span class="line">    private static RentrantLockDemo unfairLock = new RentrantLockDemo(false);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    static class Task implements Runnable &#123;</span><br><span class="line">        private RentrantLockDemo lock;</span><br><span class="line"></span><br><span class="line">        public Task(RentrantLockDemo lock) &#123;</span><br><span class="line">            this.lock = lock;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            lock.lock();</span><br><span class="line">            try &#123;</span><br><span class="line">                Thread.sleep(100);</span><br><span class="line">                System.out.println(&quot;currentThread&quot; + Thread.currentThread().getName());</span><br><span class="line">                System.out.println(&quot;fairThreads:&quot; + lock.getQueuedThreads());</span><br><span class="line">            &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                lock.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">        Task task = new Task(unfairLock);</span><br><span class="line">        for (int i = 0; i &lt; 100; i++) &#123;</span><br><span class="line">            Thread thread = new Thread(task);</span><br><span class="line">            thread.start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试结果如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">currentThreadThread-0</span><br><span class="line">fairThreads:[Thread[Thread-1,5,main], Thread[Thread-2,5,main], Thread[Thread-3,5,main], Thread[Thread-4,5,main]]</span><br><span class="line">currentThreadThread-1</span><br><span class="line">fairThreads:[Thread[Thread-2,5,main], Thread[Thread-3,5,main], Thread[Thread-4,5,main]]</span><br><span class="line">currentThreadThread-2</span><br><span class="line">fairThreads:[Thread[Thread-3,5,main], Thread[Thread-4,5,main]]</span><br><span class="line">currentThreadThread-3</span><br><span class="line">fairThreads:[Thread[Thread-4,5,main]]</span><br><span class="line">currentThreadThread-4</span><br><span class="line">fairThreads:[]</span><br></pre></td></tr></table></figure>
+<p>可以看出，线程会按照等待队列中的顺序依次执行，而非公平锁则不会完全按照顺序来执行</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/08/08/Java并发工具-CountDownLatch、CyclicBarrier、Semaphore/" data-toggle="tooltip" data-placement="top" title="Java并发工具-CountDownLatch、CyclicBarrier、Semaphore">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/07/19/步队列-AbstractQueuedSyncronizer/" data-toggle="tooltip" data-placement="top" title="同步队列-AbstractQueuedSyncronizer">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">concurrent包下锁的种类</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">ReentrantLock可重入锁分析及使用</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">共享锁与独占锁</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">公平锁与非公平锁</span></a></li></ol></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://beantech.org" target="_blank">Bean Tech</a></li>
+                    
+                        <li><a href="http://blog.kaijun.rocks" target="_blank">Kaijun&#39;s Blog</a></li>
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">It Helps SEO</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "wmj765";
+    var disqus_identifier = "https://wmj765.github.io/2018/07/29/va-concurrent包下的锁/";
+    var disqus_url = "https://wmj765.github.io/2018/07/29/va-concurrent包下的锁/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/wmj765">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; wangmj 2019 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://wmj765.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="https://wmj765.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

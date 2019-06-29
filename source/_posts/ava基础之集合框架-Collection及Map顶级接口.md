@@ -1,10 +1,11 @@
 title: java基础之集合框架--Collection及Map顶级接口
 catalog: true
 author: wangmj
-date: 2019-04-18 18:29:27
-subtitle:
 header-img: Demo.png
-tags:
+tags: []
+categories: []
+date: 2017-04-18 18:29:00
+subtitle:
 ---
 # java基础之集合框架--Collection及Map顶级接口
 
