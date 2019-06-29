@@ -20,7 +20,7 @@ permalink_defaults:
 
 # Site settings
 SEOTitle: 无名居的博客
-email: beantech@gmail.com
+email: wmj765@126.com
 description: ""
 keyword: ""
 header-img: img/header_img/kobe.png
@@ -126,7 +126,7 @@ future: true
 highlight:
   enable: true
   line_number: true
-  auto_detect: true
+  auto_detect: false
   tab_replace:
 
 # Category & Tag
