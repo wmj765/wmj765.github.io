@@ -136,13 +136,6 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -151,6 +144,13 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -213,21 +213,23 @@
 
 <div class="post-preview">
 
-    <a href="/2019/06/28/你好，hexo/">
+    <a href="/2019/03/19/算法与结构-选择排序/">
         <h2 class="post-title">
-            你好，hexo
+            算法与结构--选择排序
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            ...
+            为什么要学习算法
+万事万物皆算法，Linus大神曾说过：“低水平程序员总在考虑代码,高水平程序员总在考虑数据结构及其之间的关系”。其实现实中无时无刻在接触算法，只不过很多算法被封装起来而没有在意，如果一味地写逻辑而不去考虑算法优化是不会有什么提高的。现在技术日新月异，我认为唯一能让你在以后的竞争中脱颖而出的就是算法。
+算法系列文章打算从简单的排序开始，此后逐渐升级，并且我们会分析此排序的优缺......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by wangmj on
-            2019-06-28
+            2019-03-19
         </p>
         <div class="tags">
             
@@ -239,108 +241,22 @@
 
 <div class="post-preview">
 
-    <a href="/2019/04/18/ava基础之集合框架-Collection及Map顶级接口/">
+    <a href="/2019/03/18/上传jar包到nexus私服/">
         <h2 class="post-title">
-            java基础之集合框架--Collection及Map顶级接口
+            上传jar包到nexus私服
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            java基础之集合框架–Collection及Map顶级接口
-最近看了百度的面试题，面试内容基本都是基础知识，好多问题没有答好，所以定个小目标，在年前争取把java主流的基础知识都巩固一遍；那就以使用最频繁的集合框架开始。
-Collection及Map类图
-collection类图
+            上传jar包
+主要有两种方式，一个是网页上传，一个是命令行上传
+网页上传
 
-可以看出来，Collection下的子接口有三个分别为Set,List,Queue，其中Set为无序的且不可......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by wangmj on
-            2019-04-18
-        </p>
-        <div class="tags">
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2019/04/18/ysql-拆分以逗号隔开的字段并应用在in查询/">
-        <h2 class="post-title">
-            mysql 拆分以逗号隔开的字段并应用在in查询
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            mysql 拆分以逗号隔开的字段并应用在in查询
-利用substring_index及笛卡尔积来循环拆分sql字段；
-首先建立几条数据
-
-
-
-id
-value
-
-
-
-
-Computer
-5,ddd,eee
-
-
-Phone
-12,3333,11
-
-
-Pipe
-234
-
-
-
-假如我们需要查询的字段in phone字段的值(12,3333,11)，我们可以用一下方法
-###具体方法
-1234567......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by wangmj on
-            2019-04-18
-        </p>
-        <div class="tags">
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2019/03/18/hexo-theme-beantech/">
-        <h2 class="post-title">
-            [Hexo] Theme BeanTech
-        </h2>
-        <h3 class="post-subtitle">
-            This is hexo theme Demo.
-        </h3>
-        <div class="post-content-preview">
-            
-Ported Theme of Hux Blog, Thank Huxpro for designing such a flawless theme.
-This BeanTech theme created by YuHsuan modified from the original Porter Kaijun
-
-
-
-
-Usage
-
-I publish the whole project f......
+上传之后，将私服jar包同步到本地。在idea执行-U idea:idea。
+通过命令上传
+首先修改maven的settings文件，添加用私服户名及密码，
+123456789101112&lt;server&gt;	&lt;id&gt;releases&lt;/id&gt;	&lt;username&gt;admi......
         </div>
     </a>
     
@@ -350,9 +266,260 @@ I publish the whole project f......
         </p>
         <div class="tags">
             
-              <a href="/tags/#Hexo" title="Hexo">Hexo</a>
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/03/16/算法与结构-插入排序/">
+        <h2 class="post-title">
+            算法与结构--插入排序
+        </h2>
+        <h3 class="post-subtitle">
             
-              <a href="/tags/#Blog" title="Blog">Blog</a>
+        </h3>
+        <div class="post-content-preview">
+            前言
+万事万物皆算法，一切的始源与终点皆为思想。
+在介绍插入算法之前，我们来简单回顾上一篇学的选择排序，选择排序基本思路就是每次遍历找到最小的元素放在首位置，这样他的时间复杂度是n2，但是由于其交换的次数不是很多，他的时间并没有冒泡排序等n2时间大。那么我们本节学习的插入排序有什么优势和缺点呢，废话不多说，割了
+----------------------------------------......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by wangmj on
+            2019-03-16
+        </p>
+        <div class="tags">
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/11/30/jvm类加载机制/">
+        <h2 class="post-title">
+            jvm类加载机制
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            类加载时机
+类从被加载到虚拟机内存，到卸载出内存，要经历的生命周期：
+加载(Loading)=&gt;验证(Verification)=&gt;准备(Preparing)=&gt;解析(Resolving)=&gt;初始化(Initialization)=&gt;使用(Using)=&gt;卸载(Unloading)，其中验证、准备、解析成为连接阶段，可以参考netty里面的过程来记忆，ne......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by wangmj on
+            2018-11-30
+        </p>
+        <div class="tags">
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/11/03/jvm系列-虚拟机性能监控工具/">
+        <h2 class="post-title">
+            jvm系列--虚拟机性能监控工具
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            JDK命令行工具
+jps
+jps可以列出正在运行的虚拟机内存，是一款简单单一的工具
+命令 jps [options] [hostid]
+
+jstat
+虚拟机统计信息监视工具，是运行期地位虚拟机性能问题的首选工具，他可以显示本地或者远程的类加载、内存、垃圾收集等信息。
+命令：jstat [option vmid [interval[s|ms] {count}]]
+
+运行 jstat -gc p......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by wangmj on
+            2018-11-03
+        </p>
+        <div class="tags">
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/10/29/m系列-内存分配和回收策略/">
+        <h2 class="post-title">
+            jvm系列--内存分配和回收策略
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            对象优先在Eden区分配
+对象的内存分配，大方向上就是在堆上进行分配，当Eden区中没有足够的空间分配时，会进行一次minor GC–年轻代GC。
+写一段测试代码来测试下
+参数：
+1-Xmx20M -Xms20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8 -XX:+UseSerialGC
+1234567891011121314151617......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by wangmj on
+            2018-10-29
+        </p>
+        <div class="tags">
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/10/21/jvm系列-垃圾收集器/">
+        <h2 class="post-title">
+            jvm系列- 垃圾收集器
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            垃圾收集器
+serial收集器
+serial收集器是最原始的收集器，其是一个单线程收集器，当其垃圾回收时会&quot;stop the world&quot;，暂停所有程序，但是其在CPU核数较少的时候会比较高效，因为单线程减少了线程切换的开销。
+看图明白其原理
+
+ParNew 收集器
+ParNew收集器实际上是serial收集器的多线程版，其主要是在server模式下的新生代收集器，因为只......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by wangmj on
+            2018-10-21
+        </p>
+        <div class="tags">
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/08/28/JVM系列-垃圾回收器和内存分配/">
+        <h2 class="post-title">
+            JVM系列--垃圾回收器和内存分配
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            判断对象是否存活
+
+引用计数法
+可达性分析算法
+
+引用计数法：
+引用计数法主要为记录一个对象被引用的次数，当引用数大于0，则不会被垃圾回收；对象没被一次引用，则计数加1，对象失效时计数减一；这个方法对jvm回收来说非常高效，但是不会很准确，假如说两个对象互相引用，即使这两个对象没有其他地方应用，也会一直存在，不会被回收。
+可达性分析
+可达性分析主要由JVM根据GC root为跟，依次向下找其......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by wangmj on
+            2018-08-28
+        </p>
+        <div class="tags">
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/08/11/VM系列-JVM运行时内存区域/">
+        <h2 class="post-title">
+            JVM系列-JVM运行时内存区域
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            JVM运行时内存区域构成
+
+程序计数器
+虚拟机栈
+本地方法栈
+堆内存
+方法区
+
+
+程序计数器
+程序计数器所占内存非常小，为线程私有变量，可以看住当前线程执行行数的记录，字节码解释器通过程序计数器来查找下一条指令，及线程恢复切换等操作。
+Java虚拟机栈
+Java虚拟机栈主要存放基本类型变量及对象变量的内存地址信息，为线程私有变量。每个方法在执行的时候都会创建一个栈帧(Stack Frame)......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by wangmj on
+            2018-08-11
+        </p>
+        <div class="tags">
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/08/08/Java并发工具-CountDownLatch、CyclicBarrier、Semaphore/">
+        <h2 class="post-title">
+            Java并发工具-CountDownLatch、CyclicBarrier、Semaphore
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            CountDownLatch等待线程完成
+CountDownLatch是一个等待所有线程完成的工具，类似join()方法，初始化的时候会调用构造器传递线程个数，调用countDown方法将count值减一，调用await方法会等待知道count=0才会通过。写一个简单的例子方便理解
+1234567891011121314151617181920212223242526272829303132......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by wangmj on
+            2018-08-08
+        </p>
+        <div class="tags">
             
         </div>
     
@@ -366,6 +533,10 @@ I publish the whole project f......
 
 <ul class="pager">
     
+    
+        <li class="next">
+            <a href="/archives/2/">Older Posts &rarr;</a>
+        </li>
     
 </ul>
 
@@ -447,19 +618,23 @@ I publish the whole project f......
     <ul>
       
         <li>
-          <a href="/2019/06/28/你好，hexo/">你好，hexo</a>
+          <a href="/2019/03/19/算法与结构-选择排序/">算法与结构--选择排序</a>
         </li>
       
         <li>
-          <a href="/2019/04/18/ava基础之集合框架-Collection及Map顶级接口/">java基础之集合框架--Collection及Map顶级接口</a>
+          <a href="/2019/03/18/上传jar包到nexus私服/">上传jar包到nexus私服</a>
         </li>
       
         <li>
-          <a href="/2019/04/18/ysql-拆分以逗号隔开的字段并应用在in查询/">mysql 拆分以逗号隔开的字段并应用在in查询</a>
+          <a href="/2019/03/16/算法与结构-插入排序/">算法与结构--插入排序</a>
         </li>
       
         <li>
-          <a href="/2019/03/18/hexo-theme-beantech/">[Hexo] Theme BeanTech</a>
+          <a href="/2018/11/30/jvm类加载机制/">jvm类加载机制</a>
+        </li>
+      
+        <li>
+          <a href="/2018/11/03/jvm系列-虚拟机性能监控工具/">jvm系列--虚拟机性能监控工具</a>
         </li>
       
     </ul>
